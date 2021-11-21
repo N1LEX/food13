@@ -4,17 +4,12 @@ from rest_access_policy import AccessPolicy
 class RestaurantManageAccessPolicy(AccessPolicy):
     statements = [
         {
-            "action": ("create", "destroy", "update"),
+            "action": ("create", "destroy", "update", "hide", "activate"),
             "principal": "admin",
             "effect": "allow",
         },
         {
-            "action": "<safe_methods>",
-            "principal": "authenticated",
-            "effect": "allow",
-        },
-        {
-            "action": ("<method:put>", "<method:patch>", "add_user", "remove_user"),
+            "action": ("<safe_methods>", "<method:put>", "<method:patch>", "hide", "activate"),
             "principal": "authenticated",
             "effect": "allow",
             "condition": "is_manager",
