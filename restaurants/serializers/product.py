@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from restaurants.models import Category, Product
+from restaurants.serializers.product_portion import ProductPortionSerializer
 
 
 class CategoryPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
@@ -21,6 +22,7 @@ class ProductSerializer(serializers.ModelSerializer):
     """
     category_name = serializers.StringRelatedField(source='category.name', read_only=True)
     created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    portions = ProductPortionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Product
@@ -31,9 +33,8 @@ class ProductSerializer(serializers.ModelSerializer):
             'category',
             'category_name',
             'created_by',
-            'weight',
-            'price',
             'is_available',
+            'portions'
         )
 
 
@@ -41,14 +42,16 @@ class ProductCategorySerializer(serializers.ModelSerializer):
     """
     Сериалайзер продуктов категории
     """
+    price = serializers.IntegerField()
+    weight = serializers.IntegerField()
+
     class Meta:
         model = Product
         fields = (
             'id',
             'name',
             'logo',
-            'description',
-            'weight',
-            'price',
             'is_available',
+            'price',
+            'weight',
         )

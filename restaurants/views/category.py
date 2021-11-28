@@ -1,23 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_access_policy import AccessViewSetMixin
-from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
 
 from core.viewsets import CustomModelViewSet
 from restaurants.consts import StatusChoices
 from restaurants.models import Category
 from restaurants.permissions.category import CategoryManageAccessPolicy
-from restaurants.serializers.category import CategoryRetrieveSerializer, CategoryManageSerializer
-
-
-class CategoryRetrieveViewSet(mixins.RetrieveModelMixin, GenericViewSet):
-    """
-    View объекта категории
-    """
-    queryset = Category.objects.active().filter(restaurant__status=StatusChoices.ACTIVE).prefetch_related('products')
-    serializer_class = CategoryRetrieveSerializer
+from restaurants.serializers.category import CategoryManageSerializer
 
 
 class CategoryManageViewSet(AccessViewSetMixin, CustomModelViewSet):

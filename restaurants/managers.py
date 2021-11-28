@@ -28,3 +28,7 @@ class CategoryManager(RestaurantBaseManager):
 
 class ProductManager(RestaurantBaseManager):
     pass
+
+
+class ProductPortionManager(RestaurantBaseManager):
+    pass

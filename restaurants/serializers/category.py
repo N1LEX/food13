@@ -15,24 +15,15 @@ class RestaurantPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
         return self.context['request'].user.restaurants.all()
 
 
-class CategoryRetrieveSerializer(serializers.ModelSerializer):
+class CategoryRestaurantSerializer(serializers.ModelSerializer):
     """
-    Сериалайзер категории
+    Сериалайзер категорий ресторана
     """
     products = ProductCategorySerializer(many=True, read_only=True)
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'restaurant', 'products')
-
-
-class CategoryRestaurantSerializer(serializers.ModelSerializer):
-    """
-    Сериалайзер категорий ресторана
-    """
-    class Meta:
-        model = Category
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'products')
 
 
 class CategoryManageSerializer(serializers.ModelSerializer):

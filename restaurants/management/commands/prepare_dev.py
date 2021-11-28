@@ -3,7 +3,7 @@ from random import randint
 from django.core.management.base import BaseCommand
 
 from restaurants.consts import StatusChoices
-from restaurants.models import Kitchen, Restaurant, Category, Product
+from restaurants.models import Kitchen, Restaurant, Category, Product, ProductPortion
 from users.models import User
 
 
@@ -15,6 +15,7 @@ class Command(BaseCommand):
         self._create_restaurant()
         self._create_category()
         self._create_product()
+        self._create_product_portion()
 
     def _create_users(self):
         self.stdout.write(self.style.SUCCESS('Создание пользователей'))
@@ -76,7 +77,23 @@ class Command(BaseCommand):
                     name=f"Хавчик {c.name}",
                     price=randint(300, 1000),
                     category=c,
+                    status=StatusChoices.ACTIVE,
                 )
+            self.stdout.write(self.style.SUCCESS('Меню создано'))
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f'Ошибка создания меню: {e}'))
+
+    def _create_product_portion(self):
+        self.stdout.write(self.style.SUCCESS('Создание меню'))
+        try:
+            for p in Product.objects.all():
+                for _ in range(3):
+                    ProductPortion.objects.create(
+                        product=p,
+                        price=randint(300, 2700),
+                        weight=randint(200, 2000),
+                        status=StatusChoices.ACTIVE,
+                    )
             self.stdout.write(self.style.SUCCESS('Меню создано'))
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'Ошибка создания меню: {e}'))

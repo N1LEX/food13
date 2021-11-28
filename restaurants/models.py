@@ -10,6 +10,7 @@ from restaurants.managers import (
     RestaurantManager,
     CategoryManager,
     ProductManager,
+    ProductPortionManager,
 )
 
 
@@ -44,7 +45,7 @@ class Restaurant(RestaurantBaseModel):
     telegram = models.CharField('telegram', max_length=100, null=True, blank=True)
     website = models.CharField('website', max_length=100, null=True, blank=True)
 
-    object = RestaurantManager()
+    objects = RestaurantManager()
 
     def __str__(self):
         return self.name
@@ -85,8 +86,6 @@ class Product(RestaurantBaseModel):
     name = models.CharField('Название', max_length=100, db_index=True)
     description = models.TextField('Описание', max_length=1000)
     logo = models.ImageField('Логотип', upload_to='product_logos', blank=True, null=True)
-    weight = models.PositiveIntegerField('Вес порции', null=True, blank=True)
-    price = models.PositiveIntegerField('Цена')
     is_available = models.BooleanField('В наличие', default=True, blank=True)
     category = models.ForeignKey(
         Category,
@@ -108,3 +107,17 @@ class Product(RestaurantBaseModel):
 
     class Meta:
         unique_together = ('name', 'category')
+
+
+class ProductPortion(RestaurantBaseModel):
+    product = models.ForeignKey(Product, related_name='portions', on_delete=models.CASCADE)
+    weight = models.PositiveIntegerField('Вес порции', null=True, blank=True)
+    price = models.PositiveIntegerField('Цена')
+
+    objects = ProductPortionManager()
+
+    def __str__(self):
+        return f"{str(self.product)}: {self.price}р, {self.weight}гр."
+
+    class Meta:
+        unique_together = ('product', 'weight', 'price')
