@@ -63,7 +63,7 @@ class Command(BaseCommand):
         try:
             r = Restaurant.objects.first()
             for c in ('Плотно похавать', 'Закусон', 'Бухич'):
-                Category.objects.create(name=c, restaurant=r)
+                Category.objects.create(name=c, restaurant=r, status=StatusChoices.ACTIVE)
             self.stdout.write(self.style.SUCCESS('Категория создана'))
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'Ошибка создания категорий: {e}'))
