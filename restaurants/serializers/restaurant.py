@@ -20,6 +20,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
             'closes_in',
             'self_pickup_discount',
         )
+        read_only_fields = fields
 
 
 class RestaurantInstanceSerializer(serializers.ModelSerializer):
@@ -50,6 +51,7 @@ class RestaurantInstanceSerializer(serializers.ModelSerializer):
             'website',
             'categories',
         )
+        read_only_fields = fields
 
 
 class RestaurantManageSerializer(serializers.ModelSerializer):
