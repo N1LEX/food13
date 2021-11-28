@@ -75,7 +75,6 @@ class Command(BaseCommand):
             for c in Category.objects.filter(restaurant=r):
                 Product.objects.create(
                     name=f"Хавчик {c.name}",
-                    price=randint(300, 1000),
                     category=c,
                     status=StatusChoices.ACTIVE,
                 )
