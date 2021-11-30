@@ -16,8 +16,8 @@ class RestaurantListSerializer(serializers.ModelSerializer):
             'logo',
             'delivery_min',
             'delivery_time',
-            'opens_in',
-            'closes_in',
+            'open_time',
+            'close_time',
             'self_pickup_discount',
         )
         read_only_fields = fields
@@ -40,8 +40,8 @@ class RestaurantInstanceSerializer(serializers.ModelSerializer):
             'kitchen',
             'delivery_min',
             'delivery_time',
-            'opens_in',
-            'closes_in',
+            'open_time',
+            'close_time',
             'self_pickup_discount',
             'phone',
             'address',
@@ -50,6 +50,24 @@ class RestaurantInstanceSerializer(serializers.ModelSerializer):
             'telegram',
             'website',
             'categories',
+        )
+        read_only_fields = fields
+
+
+class KitchenRestaurantSerializer(serializers.ModelSerializer):
+    """
+    Сериалайзер ресторана кухни.
+    """
+    class Meta:
+        model = Restaurant
+        fields = (
+            'id',
+            'name',
+            'logo',
+            'delivery_min',
+            'delivery_time',
+            'open_time',
+            'close_time',
         )
         read_only_fields = fields
 
@@ -67,8 +85,8 @@ class RestaurantManageSerializer(serializers.ModelSerializer):
             'description',
             'delivery_min',
             'delivery_time',
-            'opens_in',
-            'closes_in',
+            'open_time',
+            'close_time',
             'self_pickup_discount',
             'kitchen',
             'phone',

@@ -1,16 +1,11 @@
 from rest_access_policy import AccessPolicy
 
 
-class KitchenAccessPolicy(AccessPolicy):
+class KitchenManageAccessPolicy(AccessPolicy):
     statements = [
         {
-            "action": ("create", "destroy", "<method:put>", "<method:patch>"),
+            "action": "*",
             "principal": "admin",
-            "effect": "allow",
-        },
-        {
-            "action": "<safe_methods>",
-            "principal": "*",
             "effect": "allow",
         },
     ]

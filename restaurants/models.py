@@ -1,6 +1,7 @@
 from datetime import time
 
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from safedelete import SOFT_DELETE_CASCADE
 from safedelete.models import SafeDeleteModel
@@ -30,10 +31,15 @@ class Restaurant(RestaurantBaseModel):
     description = models.TextField('Описание', max_length=700, blank=True, null=True)
     logo = models.ImageField('Логотип', upload_to='rest_logos', blank=True, null=True)
     delivery_min = models.PositiveIntegerField('Минимальная сумма для заказа')
-    delivery_time = models.PositiveSmallIntegerField('Время доставки')
-    opens_in = models.TimeField('Время открытия', default=time(hour=10), null=True)
-    closes_in = models.TimeField('Время закрытия', default=time(hour=22), null=True)
-    self_pickup_discount = models.PositiveSmallIntegerField('Скидка на самовывоз', null=True, blank=True)
+    delivery_time = models.PositiveSmallIntegerField('Время доставки', null=True, default=90)
+    open_time = models.TimeField('Время открытия', default=time(hour=10), null=True)
+    close_time = models.TimeField('Время закрытия', default=time(hour=22), null=True)
+    self_pickup_discount = models.PositiveSmallIntegerField(
+        'Скидка на самовывоз',
+        blank=True,
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(99)],
+    )
     kitchen = models.ManyToManyField('Kitchen', verbose_name='Кухня', related_name='restaurants')
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name='Сотрудники', related_name='restaurants')
 
@@ -113,6 +119,18 @@ class ProductPortion(RestaurantBaseModel):
     product = models.ForeignKey(Product, related_name='portions', on_delete=models.CASCADE)
     weight = models.PositiveIntegerField('Вес порции', null=True, blank=True)
     price = models.PositiveIntegerField('Цена')
+    discount = models.PositiveSmallIntegerField(
+        'Скидка',
+        blank=True,
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(99)]
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='product_portions',
+        on_delete=models.SET_NULL,
+        null=True,
+    )
 
     objects = ProductPortionManager()
 

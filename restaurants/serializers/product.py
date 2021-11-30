@@ -10,7 +10,7 @@ class CategoryPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
     Необходимо для избежания добавления в категории ресторанов, которые недоступны пользователю для редактирования.
     """
     def get_queryset(self):
-        categories = Category.objects.all()
+        categories = Category.objects.select_related('restaurant')
         if self.context['request'].user.is_superuser:
             return categories
         return categories.filter(restaurant__in=self.context['request'].user.restaurants.all())
@@ -21,7 +21,6 @@ class ProductSerializer(serializers.ModelSerializer):
     Сериалайзер продукта
     """
     category_name = serializers.StringRelatedField(source='category.name', read_only=True)
-    created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
     portions = ProductPortionSerializer(read_only=True, many=True)
 
     class Meta:
@@ -29,10 +28,10 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
+            'logo',
             'description',
             'category',
             'category_name',
-            'created_by',
             'is_available',
             'portions'
         )
@@ -55,3 +54,25 @@ class ProductCategorySerializer(serializers.ModelSerializer):
             'price',
             'weight',
         )
+
+
+class ProductManageSerializer(serializers.ModelSerializer):
+    """
+    Сериалайзер продукта в административной панели
+    """
+    category = CategoryPrimaryKeyRelatedField(label='Категория')
+    created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Product
+        fields = (
+            'id',
+            'name',
+            'logo',
+            'description',
+            'category',
+            'created_by',
+            'is_available',
+            'status',
+        )
+        read_only_fields = ('status',)

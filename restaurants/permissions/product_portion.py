@@ -1,7 +1,7 @@
 from rest_access_policy import AccessPolicy
 
 
-class ProductManageAccessPolicy(AccessPolicy):
+class ProductPortionManageAccessPolicy(AccessPolicy):
     statements = [
         {
             "action": ("<safe_methods>", "create", "<method:put>", "<method:patch>", "destroy", "hide", "activate"),

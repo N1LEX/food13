@@ -31,7 +31,7 @@ class User(AbstractUser):
             'unique': "Пользователь с таким email уже существует",
         },
     )
-    phone = models.CharField('Номер телефона', blank=True, null=True, max_length=12)
+    phone = models.CharField('Номер телефона', max_length=12)
     delivery_address = models.TextField('Адрес доставки', max_length=150, null=True, blank=True)
     role = models.CharField(
         'Роль',

@@ -1,15 +1,24 @@
 from rest_access_policy import AccessViewSetMixin
 
-from core.viewsets import CustomModelViewSet
+from core.viewsets import CustomReadOnlyModelViewSet
 from restaurants.models import Kitchen
-from restaurants.permissions.kitchen import KitchenAccessPolicy
-from restaurants.serializers.kitchen import KitchenSerializer
+from restaurants.permissions.kitchen import KitchenManageAccessPolicy
+from restaurants.serializers.kitchen import KitchenSerializer, KitchenManageSerializer
+from restaurants.views.base import ManageViewSet
 
 
-class KitchenViewSet(AccessViewSetMixin, CustomModelViewSet):
+class KitchenViewSet(CustomReadOnlyModelViewSet):
     """
-    Viewset кухни
+    Публичный viewset кухни
     """
     queryset = Kitchen.objects.all()
-    access_policy = KitchenAccessPolicy
     serializer_class = KitchenSerializer
+
+
+class KitchenManageViewSet(AccessViewSetMixin, ManageViewSet):
+    """
+    Viewset кухни в административной панели
+    """
+    queryset = Kitchen.objects.all()
+    access_policy = KitchenManageAccessPolicy
+    serializer_class = KitchenManageSerializer

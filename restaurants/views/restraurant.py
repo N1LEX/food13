@@ -1,12 +1,9 @@
 from django.db.models import Prefetch, Subquery, OuterRef
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_access_policy import AccessViewSetMixin
-from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from core.viewsets import (
     CustomReadOnlyModelViewSet,
-    CustomModelViewSet,
 )
 from restaurants.consts import StatusChoices
 from restaurants.models import (
@@ -21,11 +18,12 @@ from restaurants.serializers.restaurant import (
     RestaurantInstanceSerializer,
     RestaurantManageSerializer,
 )
+from restaurants.views.base import ManageViewSet
 
 
 class RestaurantReadOnlyViewSet(CustomReadOnlyModelViewSet):
     """
-    Read only viewset ресторана
+    Публичный viewset ресторана
     """
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['kitchen']
@@ -39,17 +37,17 @@ class RestaurantReadOnlyViewSet(CustomReadOnlyModelViewSet):
         product_qs = Product.objects.active()\
             .filter(portions__isnull=False, portions__status=StatusChoices.ACTIVE)\
             .annotate(price=Subquery(standard_portion.values('price')[:1]))\
-            .annotate(weight=Subquery(standard_portion.values('weight')[:1]))
+            .annotate(weight=Subquery(standard_portion.values('weight')[:1]))\
+            .distinct()
         category_qs = Category.objects.active().prefetch_related(
-            Prefetch('products', queryset=product_qs.distinct())
-        )
-
+            Prefetch('products', queryset=product_qs)
+        ).filter(products__isnull=False)
         return Restaurant.objects.active().prefetch_related(
             Prefetch('categories', queryset=category_qs)
         )
 
 
-class RestaurantManageViewSet(AccessViewSetMixin, CustomModelViewSet):
+class RestaurantManageViewSet(AccessViewSetMixin, ManageViewSet):
     """
     Viewset административной панели ресторана
     """
@@ -63,26 +61,3 @@ class RestaurantManageViewSet(AccessViewSetMixin, CustomModelViewSet):
         if self.request.user.is_superuser:
             return Restaurant.objects.prefetch_related('kitchen')
         return self.request.user.restaurants.prefetch_related('kitchen')
-
-    def perform_update(self, serializer):
-        if not self.request.user.is_superuser:
-            serializer.save(status=StatusChoices.CHECK)
-        serializer.save()
-
-    @action(detail=True)
-    def hide(self, request, pk=None):
-        instance = self.get_object()
-        if not request.user.is_superuser and instance.status != StatusChoices.ACTIVE:
-            return Response(status=400, data={"message": "Возможно отключить только активный ресторан"})
-        instance.status = StatusChoices.HIDDEN
-        instance.save()
-        return Response()
-
-    @action(detail=True)
-    def activate(self, request, pk=None):
-        instance = self.get_object()
-        if not request.user.is_superuser and instance.status != StatusChoices.HIDDEN:
-            return Response(status=400, data={"message": "Возможно включить только отключенный ресторан"})
-        instance.status = StatusChoices.ACTIVE
-        instance.save()
-        return Response()

@@ -4,7 +4,7 @@ from rest_access_policy import AccessPolicy
 class CategoryManageAccessPolicy(AccessPolicy):
     statements = [
         {
-            "action": ("<safe_methods>", "create", "update", "destroy"),
+            "action": ("<safe_methods>", "create", "<method:put>", "<method:patch>", "destroy", "hide", "activate"),
             "principal": "admin",
             "effect": "allow",
         },

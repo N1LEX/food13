@@ -1,15 +1,23 @@
 from rest_framework import routers
 
-from restaurants.views.category import CategoryRetrieveViewSet, CategoryManageViewSet
-from restaurants.views.kitchen import KitchenViewSet
-from restaurants.views.product import ProductReadOnlyViewSet
+from restaurants.views.category import CategoryManageViewSet
+from restaurants.views.kitchen import KitchenViewSet, KitchenManageViewSet
+from restaurants.views.product import ProductReadOnlyViewSet, ProductManageViewSet
+from restaurants.views.product_portion import ProductPortionManageViewSet
 from restaurants.views.restraurant import RestaurantReadOnlyViewSet, RestaurantManageViewSet
 
 router = routers.SimpleRouter()
-router.register('rest', RestaurantReadOnlyViewSet)
-router.register('rest-manage', RestaurantManageViewSet, basename='rm')
-router.register('categories', CategoryRetrieveViewSet)
-router.register('categories-manage', CategoryManageViewSet, basename='cm')
-router.register('products', ProductReadOnlyViewSet)
-router.register('kitchens', KitchenViewSet)
+
+# Public API
+router.register('rest', RestaurantReadOnlyViewSet, basename='rest')
+router.register('products', ProductReadOnlyViewSet, basename='products')
+router.register('kitchens', KitchenViewSet, basename='kitchens')
+
+# Manage API
+router.register('rest-manage', RestaurantManageViewSet, basename='rest-manage')
+router.register('categories-manage', CategoryManageViewSet, basename='categories-manage')
+router.register('products-manage', ProductManageViewSet, basename='products-manage')
+router.register('kitchens-manage', KitchenManageViewSet, basename='kitchens-manage')
+router.register('product-portions-manage', ProductPortionManageViewSet, basename='product-portions-manage')
+
 urlpatterns = router.urls
