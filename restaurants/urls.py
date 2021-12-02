@@ -9,12 +9,12 @@ from restaurants.views.restraurant import RestaurantReadOnlyViewSet, RestaurantM
 router = routers.SimpleRouter()
 
 # Public API
-router.register('rest', RestaurantReadOnlyViewSet, basename='rest')
+router.register('restaurants', RestaurantReadOnlyViewSet, basename='restaurants')
 router.register('products', ProductReadOnlyViewSet, basename='products')
 router.register('kitchens', KitchenViewSet, basename='kitchens')
 
 # Manage API
-router.register('rest-manage', RestaurantManageViewSet, basename='rest-manage')
+router.register('restaurants-manage', RestaurantManageViewSet, basename='restaurants-manage')
 router.register('categories-manage', CategoryManageViewSet, basename='categories-manage')
 router.register('products-manage', ProductManageViewSet, basename='products-manage')
 router.register('kitchens-manage', KitchenManageViewSet, basename='kitchens-manage')

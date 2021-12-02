@@ -23,5 +23,4 @@ class CategoryManageViewSet(AccessViewSetMixin, ManageViewSet):
         categories = Category.objects.select_related('restaurant')
         if self.request.user.is_superuser:
             return categories
-        user_restaurants = self.request.user.restaurants.all()
-        return categories.filter(restaurant__in=user_restaurants)
+        return categories.filter(restaurant__in=self.request.user.restaurants.all())

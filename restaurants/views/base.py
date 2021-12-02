@@ -15,8 +15,7 @@ class ManageViewSet(CustomModelViewSet):
         instance = self.get_object()
         if not request.user.is_superuser and instance.status != StatusChoices.ACTIVE:
             return Response(status=400, data={"message": "Возможно отключить только активный объект"})
-        instance.status = StatusChoices.HIDDEN
-        instance.save()
+        instance.set_status(StatusChoices.HIDDEN)
         return Response()
 
     @action(detail=True)
@@ -24,8 +23,7 @@ class ManageViewSet(CustomModelViewSet):
         instance = self.get_object()
         if not request.user.is_superuser and instance.status != StatusChoices.HIDDEN:
             return Response(status=400, data={"message": "Возможно активировать только отключенный объект"})
-        instance.status = StatusChoices.ACTIVE
-        instance.save()
+        instance.set_status(StatusChoices.ACTIVE)
         return Response()
 
     def perform_update(self, serializer):

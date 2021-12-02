@@ -19,6 +19,8 @@ class ProductPortionSerializer(serializers.ModelSerializer):
     """
     Сериалайзер порции продукта
     """
+    total_price = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = ProductPortion
         fields = (
@@ -26,6 +28,7 @@ class ProductPortionSerializer(serializers.ModelSerializer):
             'weight',
             'price',
             'discount',
+            'total_price',
         )
 
 

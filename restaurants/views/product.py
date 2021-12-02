@@ -24,6 +24,9 @@ class ProductReadOnlyViewSet(CustomRetrieveViewSet):
 
 
 class ProductManageViewSet(AccessViewSetMixin, ManageViewSet):
+    """
+    Viewset административной панели продукта
+    """
     access_policy = ProductManageAccessPolicy
     serializer_class = ProductManageSerializer
     filter_backends = [DjangoFilterBackend]
@@ -36,5 +39,4 @@ class ProductManageViewSet(AccessViewSetMixin, ManageViewSet):
         products = Product.objects.all()
         if self.request.user.is_superuser:
             return products
-        return products.select_related('category')\
-            .filter(category__restaurant__in=self.request.user.restaurants.all())
+        return products.select_related('category').filter(category__restaurant__in=self.request.user.restaurants.all())

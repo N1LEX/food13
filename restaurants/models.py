@@ -22,6 +22,13 @@ class RestaurantBaseModel(SafeDeleteModel):
     updated_at = models.DateTimeField(auto_now=True, blank=True)
     status = models.CharField('Статус', choices=StatusChoices.choices, default=StatusChoices.CHECK, max_length=20)
 
+    def set_status(self, new_status: StatusChoices) -> None:
+        """
+        Установка нового статуса.
+        """
+        self.status = new_status
+        self.save()
+
     class Meta:
         abstract = True
 
@@ -32,8 +39,8 @@ class Restaurant(RestaurantBaseModel):
     logo = models.ImageField('Логотип', upload_to='rest_logos', blank=True, null=True)
     delivery_min = models.PositiveIntegerField('Минимальная сумма для заказа')
     delivery_time = models.PositiveSmallIntegerField('Время доставки', null=True, default=90)
-    open_time = models.TimeField('Время открытия', default=time(hour=10), null=True)
-    close_time = models.TimeField('Время закрытия', default=time(hour=22), null=True)
+    open_time = models.TimeField('Время открытия', default=time(hour=10), blank=True)
+    close_time = models.TimeField('Время закрытия', default=time(hour=22), blank=True)
     self_pickup_discount = models.PositiveSmallIntegerField(
         'Скидка на самовывоз',
         blank=True,
@@ -133,6 +140,16 @@ class ProductPortion(RestaurantBaseModel):
     )
 
     objects = ProductPortionManager()
+
+    @property
+    def total_price(self) -> int:
+        """
+        Расчет стоимости порции с учетом скидки
+        """
+        discount_sum = 0
+        if self.discount:
+            discount_sum = round(self.price * self.discount / 100)
+        return self.price - discount_sum
 
     def __str__(self):
         return f"{str(self.product)}: {self.price}р, {self.weight}гр."
